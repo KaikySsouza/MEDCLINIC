@@ -1,9 +1,12 @@
-import express from 'express'
+import express, { json } from 'express'
 import type { Request,Response } from 'express';
 import { prisma } from './lib/prisma.ts';
+import userRouter from './routes/userRouter.ts';
 
 
 const app = express();
+app.use(json())
+app.use('/', userRouter)
 
 
 const PORT = 3000
@@ -17,21 +20,6 @@ app.get('/api', (req: Request , res: Response ) => {
     res.send({msg: 'Bem vindo!'})
 })
 
-
-
-export default async function main() {
-  const user = await prisma.users.create({
-    data: {
-      name: 'Kaiky',
-      email: 'kaikybelga@gmail.com',
-      cpf: '70420357637',
-      password: 'kaiky2005@@'
-    }
-  })
-  console.log("Created user", user)
-}
-
-main()
 
 
 
