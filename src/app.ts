@@ -1,7 +1,7 @@
 import express, { json } from 'express'
 import type { Request,Response } from 'express';
-import { prisma } from './lib/prisma.ts';
 import userRouter from './routes/userRouter.ts';
+
 
 
 const app = express();
@@ -19,7 +19,5 @@ app.listen(PORT, () => {
 app.get('/api', (req: Request , res: Response ) => {
     res.send({msg: 'Bem vindo!'})
 })
-
-
 
 

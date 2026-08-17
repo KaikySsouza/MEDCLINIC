@@ -5,29 +5,42 @@ import { prisma } from '../lib/prisma'
 export const UserCreate = async (
   req: Request<{}, {}, UserInterface>,
   res: Response,
-  next: NextFunction
+
 ) => {
   const { name, email, cpf, password } = req.body
+
+
+  const hash = await Bun.password.hash(password, {
+   algorithm: "bcrypt",
+   cost: 10
+  })
   const user = await prisma.users.create({
     data: {
       name,
       email,
       cpf,
-      password,
+      password: hash,
     },
   })
   res.status(201).json(user)
+
 }
 
-export const FindUser = async (req: Request, res: Response) => {
+export const FindUser = async (req: Request, res: Response, ) => {
   const { email, password } = req.body
+
   const user = await prisma.users.findUnique({
     where: {
       email,
-      password,
     },
   })
-  res.status(201).json(user)
+  const passwordverify = user ? await Bun.password.verify(password, user.password) : false
+
+  if(!user || !passwordverify) {
+    res.status(401).json({msg: 'Credenciais invalidas!'})
+  }else {
+    res.status(201).json({msg: 'Login realizado com sucesso!'})
+  }
 }
 
 export const findAllUsers = async (req: Request, res: Response) => {
