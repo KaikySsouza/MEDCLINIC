@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
-import type { Params, UserInterface, UserUpdate } from '../interfaces/userInterface'
+import type {  UserInterface, UserUpdate } from '../interfaces/userInterface'
 import { prisma } from '../lib/prisma'
+import type { Params } from '../interfaces/reqParams'
 
 export const UserCreate = async (
   req: Request<{}, {}, UserInterface>,

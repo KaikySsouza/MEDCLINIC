@@ -12,6 +12,4 @@ export interface UserUpdate{
   password: string
 }
 
-export interface Params{
-    id: number
-}
+
