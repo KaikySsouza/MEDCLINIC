@@ -5,11 +5,17 @@ export interface UserInterface {
   password: string
 }
 
-
+export interface UserFind{
+  email: string,
+  cpf: string,
+  password: string
+}
 export interface UserUpdate{
   name: string,
   email: string
   password: string
 }
+
+
 
 

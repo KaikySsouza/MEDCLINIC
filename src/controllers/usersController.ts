@@ -1,14 +1,19 @@
 import type { NextFunction, Request, Response } from 'express'
-import type { UserInterface, UserUpdate } from '../interfaces/userInterface'
+import type {
+  UserFind,
+  UserInterface,
+  UserUpdate,
+} from '../interfaces/userInterface'
 import { prisma } from '../lib/prisma'
 import type { Params } from '../interfaces/reqParams'
 import HTTPException from '../middlewares/httpExeception'
+import * as jose from 'jose'
 
 export const UserCreate = async (
   req: Request<{}, {}, UserInterface>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const { name, email, cpf, password } = req.body
 
   const finduser = await prisma.users.findFirst({
@@ -17,8 +22,9 @@ export const UserCreate = async (
     },
   })
 
-  if(finduser) {
-   throw new HTTPException('Dados já cadastrado na base de dados, favor realizar login.',
+  if (finduser) {
+    throw new HTTPException(
+      'Dados já cadastrado na base de dados, favor realizar login.',
       409
     )
   }
@@ -27,6 +33,7 @@ export const UserCreate = async (
     algorithm: 'bcrypt',
     cost: 10,
   })
+
   const user = await prisma.users.create({
     data: {
       name,
@@ -35,16 +42,20 @@ export const UserCreate = async (
       password: hash,
     },
   })
-  res.status(201).json(user)
-  next()
+  console.log(user)
+  res.status(201).json({ msg: 'Cadastro realizado!' })
 }
 
-export const FindUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body
 
-  const user = await prisma.users.findUnique({
+export const FindUser = async (
+  req: Request<{}, {}, UserFind>,
+  res: Response
+): Promise<void> => {
+  const { email, cpf, password } = req.body
+
+  const user = await prisma.users.findFirst({
     where: {
-      email,
+      OR: [{ email }, { cpf }],
     },
   })
   const passwordverify = user
@@ -54,6 +65,21 @@ export const FindUser = async (req: Request, res: Response) => {
   if (!user || !passwordverify) {
     res.status(401).json({ msg: 'Credenciais invalidas!' })
   } else {
+    const secret = new TextEncoder().encode(process.env.SECRET_JWT)
+    const alg = 'HS256'
+
+    const jwt = await new jose.SignJWT({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    })
+      .setProtectedHeader({ alg })
+      .setExpirationTime('24h')
+      .sign(secret)
+
+    const { payload, protectedHeader } = await jose.jwtVerify(jwt, secret)
+    console.log(payload, protectedHeader)
+    console.log(jwt)
     res.status(201).json({ msg: 'Login realizado com sucesso!' })
   }
 }
