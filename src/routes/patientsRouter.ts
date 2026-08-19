@@ -1,6 +1,7 @@
 import  express from "express"
 import { CreatePatient, DeletePatient, findAllPatients, findPatient, UpdatePatient } from "../controllers/patientsController"
 
+
 const PatientRouter = express()
 
 PatientRouter.post('/', CreatePatient)

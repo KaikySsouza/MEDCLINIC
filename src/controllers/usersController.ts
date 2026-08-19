@@ -1,19 +1,31 @@
 import type { NextFunction, Request, Response } from 'express'
-import type {  UserInterface, UserUpdate } from '../interfaces/userInterface'
+import type { UserInterface, UserUpdate } from '../interfaces/userInterface'
 import { prisma } from '../lib/prisma'
 import type { Params } from '../interfaces/reqParams'
+import HTTPException from '../middlewares/httpExeception'
 
 export const UserCreate = async (
   req: Request<{}, {}, UserInterface>,
   res: Response,
-
+  next: NextFunction
 ) => {
   const { name, email, cpf, password } = req.body
 
+  const finduser = await prisma.users.findFirst({
+    where: {
+      OR: [{ email }, { cpf }],
+    },
+  })
+
+  if(finduser) {
+   throw new HTTPException('Dados já cadastrado na base de dados, favor realizar login.',
+      409
+    )
+  }
 
   const hash = await Bun.password.hash(password, {
-   algorithm: "bcrypt",
-   cost: 10
+    algorithm: 'bcrypt',
+    cost: 10,
   })
   const user = await prisma.users.create({
     data: {
@@ -24,10 +36,10 @@ export const UserCreate = async (
     },
   })
   res.status(201).json(user)
-
+  next()
 }
 
-export const FindUser = async (req: Request, res: Response, ) => {
+export const FindUser = async (req: Request, res: Response) => {
   const { email, password } = req.body
 
   const user = await prisma.users.findUnique({
@@ -35,12 +47,14 @@ export const FindUser = async (req: Request, res: Response, ) => {
       email,
     },
   })
-  const passwordverify = user ? await Bun.password.verify(password, user.password) : false
+  const passwordverify = user
+    ? await Bun.password.verify(password, user.password)
+    : false
 
-  if(!user || !passwordverify) {
-    res.status(401).json({msg: 'Credenciais invalidas!'})
-  }else {
-    res.status(201).json({msg: 'Login realizado com sucesso!'})
+  if (!user || !passwordverify) {
+    res.status(401).json({ msg: 'Credenciais invalidas!' })
+  } else {
+    res.status(201).json({ msg: 'Login realizado com sucesso!' })
   }
 }
 
@@ -49,24 +63,26 @@ export const findAllUsers = async (req: Request, res: Response) => {
   res.status(201).json(users)
 }
 
-
-export const UpdateUser = async (req: Request<Params, {}, UserUpdate>, res: Response) => {
-  const {name, email, password} = req.body
+export const UpdateUser = async (
+  req: Request<Params, {}, UserUpdate>,
+  res: Response
+) => {
+  const { name, email, password } = req.body
   const user = await prisma.users.update({
-    where: { id:  req.params.id},
+    where: { id: req.params.id },
 
     data: {
       name,
       email,
-      password
-    }
+      password,
+    },
   })
   res.status(201).json(user)
 }
 
 export const DeleteUser = async (req: Request<Params>, res: Response) => {
   const user = await prisma.users.delete({
-    where: { id: req.params.id},
+    where: { id: req.params.id },
   })
   res.status(201).json(user)
 }

@@ -5,6 +5,7 @@ import type { Request, Response } from "express";
 
 export const CreatePatient = async (req: Request<{}, {}, PatientCreate>, res: Response) => {
   const {dob, gender, cep, address, telephone, user_Id} = req.body
+  
   const patient = await prisma.patients.create({
     data: {
       dob,
