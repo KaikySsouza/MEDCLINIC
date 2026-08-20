@@ -77,8 +77,6 @@ export const FindUser = async (
       .setExpirationTime('24h')
       .sign(secret)
 
-    const { payload, protectedHeader } = await jose.jwtVerify(jwt, secret)
-    console.log(payload, protectedHeader)
     console.log(jwt)
     res.status(201).json({ msg: 'Login realizado com sucesso!' })
   }
