@@ -5,11 +5,10 @@ import type {
   UserUpdate,
 } from '../interfaces/userInterface'
 import { prisma } from '../lib/prisma'
-import type { Params } from '../interfaces/reqParams'
+import type { Params } from '../interfaces/paramsInterface'
 import HTTPException from '../middlewares/httpExeception'
 import * as jose from 'jose'
-import { CreateUserSchema } from '../schemas/userSchemas'
- import * as z from "zod"
+
 
 export const UserCreate = async (
   req: Request<{}, {}, UserInterface>,
@@ -56,7 +55,7 @@ export const UserCreate = async (
 }
 
 
-export const FindUser = async (
+export const UserLogin = async (
   req: Request<{}, {}, UserFind>,
   res: Response
 ): Promise<void> => {
@@ -101,8 +100,9 @@ export const UpdateUser = async (
   res: Response
 ) => {
   const { name, email, password } = req.body
+  const  id  = Number(req.params.id)
   const user = await prisma.users.update({
-    where: { id: req.params.id },
+    where: { id },
 
     data: {
       name,
@@ -114,8 +114,9 @@ export const UpdateUser = async (
 }
 
 export const DeleteUser = async (req: Request<Params>, res: Response) => {
+  const  id  = Number(req.params.id)
   const user = await prisma.users.delete({
-    where: { id: req.params.id },
+    where: {id },
   })
   res.status(201).json(user)
 }

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import z, { ZodType } from 'zod'
 
-export function handleValidation(schema: ZodType) {
+export function validate(schema: ZodType) {
    return async ( req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.parseAsync({

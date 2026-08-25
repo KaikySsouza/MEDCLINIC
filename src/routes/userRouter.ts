@@ -1,17 +1,16 @@
 import express from 'express'
-import { DeleteUser, findAllUsers, FindUser, UpdateUser, UserCreate } from '../controllers/usersController'
+import { DeleteUser, findAllUsers, UserLogin, UpdateUser, UserCreate } from '../controllers/usersController'
 import TokenJwtValidation from '../middlewares/tokenjwtValidation'
-
-import { CreateUserSchema } from '../schemas/userSchemas'
-import { handleValidation } from '../middlewares/validationMiddleware'
+import { CreateUserSchema, DeleteUserSchema, UpdateUserSchema, UserLoginSchema } from '../schemas/userSchemas'
+import { validate } from '../middlewares/validationMiddleware'
 
 
 const userRouter = express()
 
 userRouter.get('/users',TokenJwtValidation, findAllUsers)
-userRouter.put('/update/:id', UpdateUser)
-userRouter.post('/register', handleValidation(CreateUserSchema) , UserCreate)
-userRouter.post('/login',  FindUser)
-userRouter.delete('/user/:id', DeleteUser)
+userRouter.put('/update/:id', validate(UpdateUserSchema), UpdateUser)
+userRouter.post('/register', validate(CreateUserSchema) , UserCreate)
+userRouter.post('/login', validate(UserLoginSchema),  UserLogin)
+userRouter.delete('/user/:id',validate(DeleteUserSchema), DeleteUser)
 
 export default userRouter
