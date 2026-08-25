@@ -8,6 +8,8 @@ import { prisma } from '../lib/prisma'
 import type { Params } from '../interfaces/reqParams'
 import HTTPException from '../middlewares/httpExeception'
 import * as jose from 'jose'
+import { CreateUserSchema } from '../schemas/userSchemas'
+ import * as z from "zod"
 
 export const UserCreate = async (
   req: Request<{}, {}, UserInterface>,
@@ -15,6 +17,11 @@ export const UserCreate = async (
   next: NextFunction
 ): Promise<void> => {
   const { name, email, cpf, password } = req.body
+
+
+
+
+
 
   const finduser = await prisma.users.findFirst({
     where: {
@@ -29,6 +36,7 @@ export const UserCreate = async (
     )
   }
 
+
   const hash = await Bun.password.hash(password, {
     algorithm: 'bcrypt',
     cost: 10,
@@ -42,6 +50,7 @@ export const UserCreate = async (
       password: hash,
     },
   })
+
   console.log(user)
   res.status(201).json({ msg: 'Cadastro realizado!' })
 }
