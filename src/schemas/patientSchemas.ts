@@ -3,7 +3,7 @@ import { Gender } from '../../generated/prisma/enums'
 
 export const CreatePacientSchema = z.object({
   body: z.object({
-    dob: z.date('Data de nascimento inválida'),
+    dob: z.coerce.date("Data de nascimento inválida"),
 
     gender: z.enum(Gender, 'Gênero inválido'),
 
