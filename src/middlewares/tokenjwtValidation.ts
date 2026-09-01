@@ -25,7 +25,7 @@ import * as jose from 'jose'
     const secret = new TextEncoder().encode(keyEnv)
 
      const ValidToken = await jose.jwtVerify(token, secret)
-    console.log(ValidToken)
+     
 
    next()
  }
