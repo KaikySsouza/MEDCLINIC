@@ -50,7 +50,7 @@ export const UserCreate = async (
     },
   })
 
-  console.log(user)
+
   res.status(201).json({ msg: 'Cadastro realizado!' })
 }
 
@@ -84,8 +84,8 @@ export const UserLogin = async (
       .setProtectedHeader({ alg })
       .setExpirationTime('24h')
       .sign(secret)
+      console.log(jwt)
 
-    console.log(jwt)
     res.status(201).json({ msg: 'Login realizado com sucesso!' })
   }
 }
@@ -110,7 +110,7 @@ export const UpdateUser = async (
       password,
     },
   })
-  res.status(201).json(user)
+  res.status(200).json({msg:'Usúario atualizado!'})
 }
 
 export const DeleteUser = async (req: Request<Params>, res: Response) => {
@@ -118,5 +118,5 @@ export const DeleteUser = async (req: Request<Params>, res: Response) => {
   const user = await prisma.users.delete({
     where: {id },
   })
-  res.status(201).json(user)
+  res.status(200).json({msg: `Usúario removido do sistema!` })
 }

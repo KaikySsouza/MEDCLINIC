@@ -9,7 +9,7 @@ const userRouter = express()
 
 userRouter.get('/users',TokenJwtValidation, findAllUsers)
 userRouter.put('/update/:id', validate(UpdateUserSchema), UpdateUser)
-userRouter.post('/register', validate(CreateUserSchema) , UserCreate)
+userRouter.post('/register',  UserCreate)
 userRouter.post('/login', validate(UserLoginSchema),  UserLogin)
 userRouter.delete('/user/:id',validate(DeleteUserSchema), DeleteUser)
 
