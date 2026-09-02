@@ -8,6 +8,7 @@ import { prisma } from '../lib/prisma'
 import type { Params } from '../interfaces/paramsInterface'
 import HTTPException from '../middlewares/httpExeception'
 import * as jose from 'jose'
+import { Jwt } from '../utils/jwt'
 
 
 export const UserCreate = async (
@@ -57,7 +58,7 @@ export const UserCreate = async (
 
 export const UserLogin = async (
   req: Request<{}, {}, UserFind>,
-  res: Response
+  res: Response, next: NextFunction
 ): Promise<void> => {
   const { email, cpf, password } = req.body
 
@@ -73,21 +74,11 @@ export const UserLogin = async (
   if (!user || !passwordverify) {
     res.status(401).json({ msg: 'Credenciais invalidas!' })
   } else {
-    const secret = new TextEncoder().encode(process.env.SECRET_JWT)
-    const alg = 'HS256'
-
-    const jwt = await new jose.SignJWT({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    })
-      .setProtectedHeader({ alg })
-      .setExpirationTime('24h')
-      .sign(secret)
-      console.log(jwt)
 
     res.status(201).json({ msg: 'Login realizado com sucesso!' })
   }
+
+  next()
 }
 
 export const findAllUsers = async (req: Request, res: Response) => {
