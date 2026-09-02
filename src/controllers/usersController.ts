@@ -7,8 +7,8 @@ import type {
 import { prisma } from '../lib/prisma'
 import type { Params } from '../interfaces/paramsInterface'
 import HTTPException from '../middlewares/httpExeception'
-import * as jose from 'jose'
-import { Jwt } from '../utils/jwt'
+import { HashPassword, PasswordVerify } from '../utils/hash'
+
 
 
 export const UserCreate = async (
@@ -17,11 +17,6 @@ export const UserCreate = async (
   next: NextFunction
 ): Promise<void> => {
   const { name, email, cpf, password } = req.body
-
-
-
-
-
 
   const finduser = await prisma.users.findFirst({
     where: {
@@ -37,17 +32,14 @@ export const UserCreate = async (
   }
 
 
-  const hash = await Bun.password.hash(password, {
-    algorithm: 'bcrypt',
-    cost: 10,
-  })
 
-  const user = await prisma.users.create({
+
+   await prisma.users.create({
     data: {
       name,
       email,
       cpf,
-      password: hash,
+      password: String(HashPassword(password)),
     },
   })
 
@@ -67,9 +59,9 @@ export const UserLogin = async (
       OR: [{ email }, { cpf }],
     },
   })
-  const passwordverify = user
-    ? await Bun.password.verify(password, user.password)
-    : false
+
+  const passwordverify = user?.password
+   PasswordVerify(password, String(passwordverify))
 
   if (!user || !passwordverify) {
     res.status(401).json({ msg: 'Credenciais invalidas!' })
