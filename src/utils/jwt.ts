@@ -5,13 +5,13 @@ import * as jose from 'jose'
     const alg = 'HS256'
 
 
-   export async function Jwt(req: Request, res: Response, next: NextFunction ) {
+   export async function Jwt(id: Number, name: string, email: string) {
 
 
       const jwt = await new jose.SignJWT({
-       id: req.body.id,
-       name: req.body.name,
-       email: req.body.email
+       id,
+       name,
+       email
       })
 
       .setProtectedHeader({ alg })

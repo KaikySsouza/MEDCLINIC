@@ -11,7 +11,7 @@ const userRouter = express()
 userRouter.get('/users',ValidateTokenJwt, findAllUsers)
 userRouter.put('/update/:id', validate(UpdateUserSchema), UpdateUser)
 userRouter.post('/register',  UserCreate)
-userRouter.post('/login', validate(UserLoginSchema),  UserLogin, Jwt)
+userRouter.post('/login', validate(UserLoginSchema),  UserLogin)
 userRouter.delete('/user/:id',validate(DeleteUserSchema), DeleteUser)
 
 export default userRouter

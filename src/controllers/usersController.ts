@@ -8,6 +8,7 @@ import { prisma } from '../lib/prisma'
 import type { Params } from '../interfaces/paramsInterface'
 import HTTPException from '../middlewares/httpExeception'
 import { HashPassword, PasswordVerify } from '../utils/hash'
+import { Jwt } from '../utils/jwt'
 
 
 
@@ -69,6 +70,9 @@ export const UserLogin = async (
 
     res.status(201).json({ msg: 'Login realizado com sucesso!' })
   }
+
+
+  Jwt( Number(user?.id), String(user?.name), String(user?.password))
 
   next()
 }
