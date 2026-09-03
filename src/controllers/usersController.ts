@@ -9,44 +9,30 @@ import type { Params } from '../interfaces/paramsInterface'
 import HTTPException from '../middlewares/httpExeception'
 import { HashPassword, PasswordVerify } from '../utils/hash'
 import { Jwt } from '../utils/jwt'
+import { UsersService } from '../services/user.service'
+import { UsersRepository } from '../repositories/user.repository'
+
 
 
 
 export const UserCreate = async (
-  req: Request<{}, {}, UserInterface>,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  const { name, email, cpf, password } = req.body
-
-  const finduser = await prisma.users.findFirst({
-    where: {
-      OR: [{ email }, { cpf }],
-    },
-  })
-
-  if (finduser) {
-    throw new HTTPException(
-      'Dados já cadastrado na base de dados, favor realizar login.',
-      409
-    )
-  }
+  req: Request<{}, {}, UserInterface>,  res: Response,  next: NextFunction): Promise<void> => {
 
 
+  const usersRepository = new UsersRepository()
+
+  const usersService = new UsersService(usersRepository)
+  await usersService.create(req.body)
 
 
-   await prisma.users.create({
-    data: {
-      name,
-      email,
-      cpf,
-      password: String(HashPassword(password)),
-    },
-  })
 
 
   res.status(201).json({ msg: 'Cadastro realizado!' })
 }
+
+
+
+
 
 
 export const UserLogin = async (
