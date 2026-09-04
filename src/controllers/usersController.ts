@@ -16,17 +16,13 @@ import { UsersRepository } from '../repositories/user.repository'
 
 
 export const UserCreate = async (
-  req: Request<{}, {}, UserInterface>,  res: Response,  next: NextFunction): Promise<void> => {
+  req: Request<{}, {}, UserInterface>,  res: Response): Promise<void> => {
 
 
   const usersRepository = new UsersRepository()
 
   const usersService = new UsersService(usersRepository)
   await usersService.create(req.body)
-
-
-
-
   res.status(201).json({ msg: 'Cadastro realizado!' })
 }
 
