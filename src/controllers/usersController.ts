@@ -30,15 +30,19 @@ export const UserLogin = async (
 
 
  const token = await usersService.login(req.body)
-
  res.status(200).json({msg: 'login realizado com sucesso', token})
 
 }
 
+
+
+
 export const findAllUsers = async (req: Request, res: Response) => {
-  const users = await prisma.users.findMany()
+  const users = await usersService.findusers()
   res.status(201).json(users)
 }
+
+
 
 export const UpdateUser = async (
   req: Request<Params, {}, UserUpdate>,

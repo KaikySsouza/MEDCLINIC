@@ -20,6 +20,8 @@ class UsersService {
       if(user) {
         throw new HTTPException('Usúario já cadastrado, favor realizar login!', 401)
       }
+
+
     await this.usersRepository.userCreate(data.name, data.email, data.cpf, data.password)
   }
 
@@ -29,6 +31,12 @@ class UsersService {
   const user =   await this.usersRepository.userLogin(data.email, data.cpf, data.password)
   const jwt =  await Jwt(user.id, user.name, user.email)
   return jwt
+  }
+
+
+  async findusers() {
+    const users = await this.usersRepository.userFindMany()
+    return users
   }
 }
 

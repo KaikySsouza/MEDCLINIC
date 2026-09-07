@@ -45,6 +45,12 @@ class UsersRepository {
     console.log(user)
     return user
   }
+
+
+  async userFindMany() {
+    const users = await prisma.users.findMany()
+    return users
+  }
 }
 
 export { UsersRepository }
