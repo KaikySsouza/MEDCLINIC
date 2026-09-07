@@ -6,6 +6,8 @@ export interface UserInterface {
 }
 
 export interface UserFind{
+  id: number,
+  name: string
   email: string,
   cpf: string,
   password: string

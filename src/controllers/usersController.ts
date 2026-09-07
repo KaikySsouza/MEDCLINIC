@@ -6,57 +6,33 @@ import type {
 } from '../interfaces/userInterface'
 import { prisma } from '../lib/prisma'
 import type { Params } from '../interfaces/paramsInterface'
-import HTTPException from '../middlewares/httpExeception'
-import { HashPassword, PasswordVerify } from '../utils/hash'
-import { Jwt } from '../utils/jwt'
 import { UsersService } from '../services/user.service'
 import { UsersRepository } from '../repositories/user.repository'
 
 
 
 
+const usersRepository = new UsersRepository()
+const usersService = new UsersService(usersRepository)
+
 export const UserCreate = async (
   req: Request<{}, {}, UserInterface>,  res: Response): Promise<void> => {
 
-
-  const usersRepository = new UsersRepository()
-
-  const usersService = new UsersService(usersRepository)
   await usersService.create(req.body)
   res.status(201).json({ msg: 'Cadastro realizado!' })
+
 }
-
-
-
-
-
 
 export const UserLogin = async (
   req: Request<{}, {}, UserFind>,
   res: Response, next: NextFunction
 ): Promise<void> => {
-  const { email, cpf, password } = req.body
-
-  const user = await prisma.users.findFirst({
-    where: {
-      OR: [{ email }, { cpf }],
-    },
-  })
-
-  const passwordverify = user?.password
-   PasswordVerify(password, String(passwordverify))
-
-  if (!user || !passwordverify) {
-    res.status(401).json({ msg: 'Credenciais invalidas!' })
-  } else {
-
-    res.status(201).json({ msg: 'Login realizado com sucesso!' })
-  }
 
 
-  Jwt( Number(user?.id), String(user?.name), String(user?.password))
+ const token = await usersService.login(req.body)
 
-  next()
+ res.status(200).json({msg: 'login realizado com sucesso', token})
+
 }
 
 export const findAllUsers = async (req: Request, res: Response) => {
@@ -70,7 +46,7 @@ export const UpdateUser = async (
 ) => {
   const { name, email, password } = req.body
   const  id  = Number(req.params.id)
-  const user = await prisma.users.update({
+  await prisma.users.update({
     where: { id },
 
     data: {
@@ -84,7 +60,7 @@ export const UpdateUser = async (
 
 export const DeleteUser = async (req: Request<Params>, res: Response) => {
   const  id  = Number(req.params.id)
-  const user = await prisma.users.delete({
+   await prisma.users.delete({
     where: {id },
   })
   res.status(200).json({msg: `Usúario removido do sistema!` })

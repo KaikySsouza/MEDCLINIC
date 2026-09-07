@@ -1,34 +1,37 @@
 
 import type { Request, Response, NextFunction } from 'express'
 import * as jose from 'jose'
-   const secret = new TextEncoder().encode(process.env.SECRET_JWT)
-    const alg = 'HS256'
 
 
-   export async function Jwt(id: Number, name: string, email: string) {
+export async function Jwt(id: Number, name: string, email: string) {
 
+  const secret = new TextEncoder().encode(process.env.SECRET_JWT)
+   const alg = 'HS256'
 
       const jwt = await new jose.SignJWT({
        id,
        name,
        email
       })
-
       .setProtectedHeader({ alg })
+      .setIssuedAt()
       .setExpirationTime('24h')
       .sign(secret)
-      console.log(jwt)
+
+      return jwt
     }
 
 
  export default async function ValidateTokenJwt(req: Request, res: Response, next: NextFunction ) {
     const headers = req.headers.authorization
 
+
     if(!headers) {
       return res.status(401).json({Error: 'Token não informado'})
     }
 
-    const token = headers.split(' ')[1]
+    const token =  headers.split(' ')[1]
+
 
     if(!token) {
       return res.status(401).json({msg: 'Usúario não autorizado!'})
@@ -43,9 +46,7 @@ import * as jose from 'jose'
 
 
     const secret = new TextEncoder().encode(keyEnv)
-
-     await jose.jwtVerify(token, secret)
-
+    await jose.jwtVerify(token, secret)
 
    next()
  }

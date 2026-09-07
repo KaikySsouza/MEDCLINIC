@@ -3,7 +3,7 @@ import { DeleteUser, findAllUsers, UserLogin, UpdateUser, UserCreate } from '../
 import ValidateTokenJwt from '../utils/jwt'
 import { CreateUserSchema, DeleteUserSchema, UpdateUserSchema, UserLoginSchema } from '../schemas/userSchemas'
 import { validate } from '../middlewares/validationMiddleware'
-import { Jwt } from '../utils/jwt'
+ 
 
 
 const userRouter = express()

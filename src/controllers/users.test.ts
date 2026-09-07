@@ -1,13 +1,5 @@
 import {
-  describe,
-  test,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  afterEach,
-  onTestFinished,
-} from 'bun:test'
+  describe, test, expect, beforeAll,  afterAll, beforeEach, afterEach, onTestFinished,} from 'bun:test'
 import request from 'supertest'
 import app from '../app'
 import { faker } from '@faker-js/faker'
@@ -20,23 +12,35 @@ const randomNumber = faker.number.int({
   max: 99999999999,
 })
 
-describe('usersController.ts', () => {
-  beforeAll(async () => {
-    await prisma.$connect()
-  })
 
-  afterAll(async () => {
-    await prisma.$disconnect()
-  })
+beforeAll(async () => {
+  await prisma.$connect()
+})
+
+afterAll(async () => {
+  await prisma.$disconnect()
+})
+
+
+describe('usersController.ts', () => {
+
 
   let userid: Number
   beforeEach(async () => {
+
+    const password = String(randomNumber)
+
+      const hash = await Bun.password.hash(password, {
+        algorithm: 'bcrypt',
+        cost: 10,
+      })
+
     const user = await prisma.users.create({
       data: {
         name: 'test123',
         email: 'test123@gmail.com',
         cpf: '12345612345',
-        password: '1234',
+        password: hash,
       },
     })
     userid = user.id
@@ -83,9 +87,11 @@ describe('usersController.ts', () => {
       .post('/login')
       .set('Accept', 'application/json')
       .send({
-        email: randomEmail,
+        email: 'test123@gmail.com',
         password: randomNumber,
       })
+
+      console.log(response.body)
     expect(response.status).toBe(201)
     expect(response.body).toEqual({ msg: 'Login realizado com sucesso!' })
   })
@@ -102,16 +108,16 @@ describe('usersController.ts', () => {
     expect(response.body).toEqual({ msg: 'Credenciais invalidas!' })
   })
 
-  // test('Get/findAllUsers', async () => {
-  //   const response = await request(app)
-  //     .get('/users')
-  //     .set(
-  //       'Authorization',
-  //       `Bearer ${['eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MjksIm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsImV4cCI6MTc4ODI4NTEyMH0._7oEFj8q7GXaDEeR47J540jdfVeAOyz_5VHfMExJIWQ']}`
-  //     )
+  test('Get/findAllUsers', async () => {
+    const response = await request(app)
+      .get('/users')
+      .set(
+        'Authorization',
+        `Bearer ${['eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ODEyLCJuYW1lIjoidGVzdDEyMyIsImVtYWlsIjoidGVzdDEyM0BnbWFpbC5jb20iLCJleHAiOjE3ODgzOTc1NDF9.qnsaDlWH-09c26P9LikNlh_LcPckOVjFOBZD_64W4Ck']}`
+      )
 
-  //   expect(response.status).toBe(201)
-  // })
+    expect(response.status).toBe(201)
+  })
 
   test('PUT/ retorna usúario atualizado', async () => {
     const response = await request(app)
