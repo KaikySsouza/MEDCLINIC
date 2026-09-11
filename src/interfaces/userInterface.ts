@@ -12,6 +12,8 @@ export interface UserFind{
   cpf: string,
   password: string
 }
+
+export type UserId = Pick<UserFind, 'id'>
 export interface UserUpdate{
   name: string,
   email: string
@@ -19,5 +21,17 @@ export interface UserUpdate{
 }
 
 
+    declare global {
+  namespace Express {
+
+    interface UserReq{
+      id: number | string
+
+    }
+     interface Request {
+      user: UserReq;
+    }
+  }
+}
 
 

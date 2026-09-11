@@ -1,5 +1,3 @@
-
-
 import { prisma } from '../lib/prisma'
 import HTTPException from '../middlewares/httpExeception'
 import { HashPassword, PasswordVerify } from '../utils/hash'
@@ -50,6 +48,32 @@ class UsersRepository {
   async userFindMany() {
     const users = await prisma.users.findMany()
     return users
+  }
+
+  async userUpdate(name: string, email: string, password: string, userid: Express.UserReq) {
+    const hash = await HashPassword(password)
+    const {id} = userid
+    const user = await prisma.users.update({
+      data: {
+        name,
+        email,
+        password: hash
+      },
+      where: {id: Number(id)}
+
+    })
+    return user
+
+  }
+
+
+  async userDelete(userid: Express.UserReq) {
+    const {id} = userid
+   const user = await prisma.users.delete({
+    where: {id: Number(id)}
+   })
+
+   return user
   }
 }
 

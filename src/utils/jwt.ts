@@ -1,6 +1,7 @@
 
 import type { Request, Response, NextFunction } from 'express'
 import * as jose from 'jose'
+import { extend } from 'zod/mini'
 
 
 export async function Jwt(id: Number, name: string, email: string) {
@@ -20,6 +21,16 @@ export async function Jwt(id: Number, name: string, email: string) {
 
       return jwt
     }
+
+
+
+
+interface Decode {
+  payload: {
+    id:string
+  }
+}
+
 
 
  export default async function ValidateTokenJwt(req: Request, res: Response, next: NextFunction ) {
@@ -46,7 +57,9 @@ export async function Jwt(id: Number, name: string, email: string) {
 
 
     const secret = new TextEncoder().encode(keyEnv)
-    await jose.jwtVerify(token, secret)
+    const decode = await jose.jwtVerify(token, secret) as Decode
+  
+    req.user  = {id: decode.payload.id}
 
    next()
  }

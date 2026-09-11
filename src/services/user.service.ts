@@ -1,4 +1,4 @@
-import type { UserFind, UserInterface } from "../interfaces/userInterface"
+import type { UserFind, UserInterface, UserUpdate } from "../interfaces/userInterface"
 import { UsersRepository } from "../repositories/user.repository"
 import HTTPException from "../middlewares/httpExeception"
 import { Jwt } from "../utils/jwt"
@@ -37,6 +37,19 @@ class UsersService {
   async findusers() {
     const users = await this.usersRepository.userFindMany()
     return users
+  }
+
+
+  async update( data: UserUpdate, id: Express.UserReq ) {
+    const update = await this.usersRepository.userUpdate(data.name, data.email, data.password, id)
+    return update
+  }
+
+  async delete(id: Express.UserReq) {
+    const userDelete = await this.usersRepository.userDelete(id)
+    return userDelete
+
+
   }
 }
 
