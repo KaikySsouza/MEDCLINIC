@@ -40,7 +40,7 @@ class UsersRepository {
    if (!Validate) {
       throw new HTTPException('Senha incorreta!', 404)
     }
-    console.log(user)
+
     return user
   }
 
