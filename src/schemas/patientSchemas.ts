@@ -42,11 +42,4 @@ export const FindPatientSchema = z.object({
   }),
 })
 
-export const DeletePatientSchema = z.object({
-  params: z.object({
-    id: z.coerce
-      .number('ID deve ser um número')
-      .int('ID deve ser um número inteiro')
-      .positive('ID deve ser um número positivo'),
-  }),
-})
+ 

@@ -1,4 +1,4 @@
-enum Gender {
+export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   NON_BINARY = 'NON_BINARY',
@@ -7,7 +7,7 @@ enum Gender {
 }
 
 export interface PatientCreate {
-  dob: Date
+  dob: string
   gender: Gender
   cep: string
   address: string
@@ -16,7 +16,7 @@ export interface PatientCreate {
 }
 
 export interface UpdatePatientInterface {
-  dob: Date
+  dob: string
   gender: Gender
   cep: string
   address: string

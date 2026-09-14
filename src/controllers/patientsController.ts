@@ -1,60 +1,39 @@
 import type { PatientCreate, UpdatePatientInterface } from "../interfaces/patientInterface";
 import type { Params } from "../interfaces/paramsInterface";
-import { prisma } from "../lib/prisma";
 import type { Request, Response } from "express";
+import { PatientService } from "../services/patient.service";
+import { PatientRepository } from "../repositories/patient.repository";
+
+  const patientRepository = new PatientRepository
+  const patientService = new PatientService(patientRepository)
+
 
 export const CreatePatient = async (req: Request<{}, {}, PatientCreate>, res: Response) => {
-  const {dob, gender, cep, address, telephone, user_Id} = req.body
-
-  const patient = await prisma.patients.create({
-    data: {
-      dob,
-      gender,
-      cep,
-      address,
-      telephone,
-      user_Id,
-    }
-  })
+  const patient = await patientService.create(req.body, req.user)
 
   res.status(201).json(patient)
 }
 
-export const findPatient = async (req: Request<Params>, res: Response) => {
-  const  id  = Number(req.params.id)
-  const patient = prisma.patients.findUnique({
-    where: {id}
-  })
+export const findPatient = async (req: Request, res: Response) => {
+
+   const patient = await patientService.viewprofile(req.user)
   res.status(201).json(patient)
 }
 
 
 export const findAllPatients = async (req: Request, res: Response) => {
-  const patients = prisma.patients.findMany()
+  const patients = await patientService.findAll()
   res.status(201).json(patients)
 }
 
 
 export const UpdatePatient = async (req: Request<Params, {}, UpdatePatientInterface>, res:Response) => {
-  const {dob, gender, cep, address, telephone } = req.body
-  const  id  = Number(req.params.id)
-  const patient = prisma.patients.update({
-    where: {id },
-    data: {
-      dob,
-      gender,
-      cep,
-      address,
-      telephone
-    }
-  })
+  const patient = await patientService.update(req.body, req.user)
   res.status(201).json(patient)
 }
 
-export const DeletePatient = async (req: Request<Params>, res: Response) => {
-  const  id  = Number(req.params.id)
-  const patient = prisma.patients.delete({
-    where: {id}
-  })
+export const DeletePatient = async (req: Request , res: Response) => {
+
+  const patient = await patientService.delete(req.user)
   res.status(201).json(patient)
 }

@@ -58,7 +58,7 @@ interface Decode {
 
     const secret = new TextEncoder().encode(keyEnv)
     const decode = await jose.jwtVerify(token, secret) as Decode
-  
+
     req.user  = {id: decode.payload.id}
 
    next()
