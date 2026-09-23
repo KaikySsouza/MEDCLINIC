@@ -1,4 +1,4 @@
-import type { UserFind, UserInterface, UserUpdate } from "../interfaces/userInterface"
+import type { IUserRepo, IUserService, UserFind, UserInterface, UserUpdate } from "../interfaces/userInterface"
 import { UsersRepository } from "../repositories/user.repository"
 import HTTPException from "../middlewares/httpExeception"
 import { Jwt } from "../utils/jwt"
@@ -8,9 +8,9 @@ import { Jwt } from "../utils/jwt"
 
 
 
-class UsersService {
+class UsersService implements IUserService {
   constructor(
-    private usersRepository: UsersRepository
+    private readonly usersRepository: IUserRepo
   ) {}
 
 
@@ -34,7 +34,7 @@ class UsersService {
   }
 
 
-  async findusers() {
+  async findusers(): Promise<UserInterface[]> {
     const users = await this.usersRepository.userFindMany()
     return users
   }

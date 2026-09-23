@@ -1,9 +1,9 @@
 import express, { json } from 'express'
 import type { Request,Response } from 'express';
-import userRouter from './routes/userRouter.ts';
+ import userRouter from './routes/userRouter.ts';
 import PatientRouter from './routes/patientsRouter.ts';
 import errorHandler from './middlewares/errorHandle.ts';
- 
+
 
 
 const app = express();

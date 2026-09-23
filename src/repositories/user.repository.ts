@@ -1,10 +1,11 @@
+import type { IUserRepo } from '../interfaces/userInterface'
 import { prisma } from '../lib/prisma'
 import HTTPException from '../middlewares/httpExeception'
 import { HashPassword, PasswordVerify } from '../utils/hash'
 
 
 
-class UsersRepository {
+class UsersRepository implements IUserRepo{
 
   async userFind(email: string) {
     return await prisma.users.findUnique({ where: { email } })
@@ -75,6 +76,7 @@ class UsersRepository {
 
    return user
   }
+
 }
 
 export { UsersRepository }
