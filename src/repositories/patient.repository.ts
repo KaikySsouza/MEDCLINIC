@@ -1,17 +1,21 @@
 
-import type { Gender, PatientCreate } from "../interfaces/patientInterface";
+import type { Gender } from "../../generated/prisma/enums";
+import type { IPatientRepo } from "../interfaces/patientInterface";
 import { prisma } from "../lib/prisma";
 import HTTPException from "../middlewares/httpExeception";
 
-class PatientRepository {
+class PatientRepository implements IPatientRepo{
 
 
-async  patientCreate(  dob: string, gender: Gender, cep: string, address: string,telephone: string, user_Id: number, userid: Express.UserReq){
+async patientCreate(dob: Date, gender: Gender, cep: string, address: string,telephone: string, userid: Express.UserReq){
+
   const { id } = userid
-  const date = new Date(dob)
+ 
+
+
   const patient  = await prisma.patients.create({
     data:{
-      dob: date,
+      dob,
       gender,
       cep,
       address,
@@ -20,6 +24,8 @@ async  patientCreate(  dob: string, gender: Gender, cep: string, address: string
     }
 
   })
+
+
   return patient
 }
 

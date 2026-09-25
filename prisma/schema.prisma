@@ -28,7 +28,7 @@ model Users {
 model Patients {
   id           Int            @id @default(autoincrement())
   dob          DateTime
-  gender       Gender?
+  gender       Gender
   cep          String         @db.VarChar(8)
   address      String
   telephone    String         @db.VarChar(20)

@@ -1,14 +1,16 @@
-import type { Gender } from "../../generated/prisma/enums";
-import type { PatientCreate, UpdatePatientInterface } from "../interfaces/patientInterface";
-import type { PatientRepository } from "../repositories/patient.repository";
+import type { IPatientRepo, IPatientService, PatientInterface, UpdatePatientInterface } from "../interfaces/patientInterface";
 
-class PatientService {
-  constructor(private patientrepository: PatientRepository)
+
+class PatientService implements IPatientService  {
+  constructor(private patientrepository: IPatientRepo)
   {}
 
-  async create(data: PatientCreate, userid: Express.UserReq) {
+  async create(data: PatientInterface, userid: Express.UserReq) {
 
-    const patient = await this.patientrepository.patientCreate(data.dob, data.gender, data.cep, data.address, data.telephone, data.user_Id, userid )
+
+
+    const patient = await this.patientrepository.patientCreate(data.dob, data.gender, data.cep, data.address, data.telephone, userid )
+
     return patient
   }
 

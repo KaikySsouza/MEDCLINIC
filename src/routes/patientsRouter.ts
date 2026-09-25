@@ -1,17 +1,15 @@
 import  express from "express"
-import { CreatePatient, DeletePatient, findAllPatients, findPatient, UpdatePatient } from "../controllers/patientsController"
 import ValidateTokenJwt from "../utils/jwt"
-import { validate } from "../middlewares/validationMiddleware"
-import { CreatePacientSchema} from "../schemas/patientSchemas"
+import { patientController } from "../container/composition-root"
 
 
 const PatientRouter = express()
 
-PatientRouter.post('/create',ValidateTokenJwt, validate(CreatePacientSchema), CreatePatient)
-PatientRouter.get('/view-patients',ValidateTokenJwt,findAllPatients)
-PatientRouter.get('/view-profile',ValidateTokenJwt, findPatient)
-PatientRouter.put('/update-patient',ValidateTokenJwt, UpdatePatient)
-PatientRouter.delete('/patient/delete-account',ValidateTokenJwt, DeletePatient)
+PatientRouter.post('/create',ValidateTokenJwt, patientController.CreatePatient)
+PatientRouter.get('/view-profile',ValidateTokenJwt, patientController.findPatient)
+PatientRouter.get('/view-patients',ValidateTokenJwt,patientController.findAllPatients)
+PatientRouter.put('/update-patient',ValidateTokenJwt, patientController.UpdatePatient)
+PatientRouter.delete('/patient/delete-account',ValidateTokenJwt, patientController.DeletePatient)
 
 
 export default PatientRouter
